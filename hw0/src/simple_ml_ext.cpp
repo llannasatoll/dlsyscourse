@@ -37,15 +37,13 @@ void softmax_regression_epoch_cpp(const float *X, const unsigned char *y,
         // create z matrix
         double z[batch][k] = {0.};
         for(int i=0; i<(int)batch; i++){
-            float sum_z = 0.;
+            double sum_z = 0.;
             for(int l=0; l<(int)k; l++){
                 for(int j=0; j<(int)n; j++)
                     z[i][l] += (X[(step*batch+i)*n+j] * theta[j*k+l]);
                 sum_z += std::exp(z[i][l]);
             }
             for(int l=0; l<(int)k; l++){
-                // float tmp = std::exp(z[i][l]);
-                // std::cout << z[i][l] << ", " << std::exp(z[i][l]) << std::endl;
                 z[i][l] = (std::exp(z[i][l]) / sum_z);
                 if(y[step*batch+i] == (unsigned char)(l))
                     z[i][l]--;
@@ -53,11 +51,8 @@ void softmax_regression_epoch_cpp(const float *X, const unsigned char *y,
         }
         for(int j=0; j<(int)n; j++){
             for(int l=0; l<(int)k; l++){
-                for(int i=0; i<(int)batch; i++){
+                for(int i=0; i<(int)batch; i++)
                     theta[j*k+l] -= (X[(step*batch+i)*n + j]*z[i][l])*lr/(double)batch;
-                    // if(j+i+l==0)
-                        // std::cout << theta[j*k+l] << std::endl;
-                }
             }
         }
     }
